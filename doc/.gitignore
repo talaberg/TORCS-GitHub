@@ -1,5 +1,13 @@
 /CVS
-/data
+/changelogs
+/devel
+/faq
+/history
+/man
+/testing
+/tutorials
+/userman
+/website
 /PaxHeaders.32765
 *.xml
 *.exp
