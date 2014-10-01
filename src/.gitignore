@@ -23,3 +23,15 @@
 *.mk
 *.rc
 *.desktop
+*.obj
+*.sbr
+*.idb
+*.pdb
+*.htm
+*.suo
+*.sln
+*.bsc
+*.user
+*.ncb
+*.map
+*.lib

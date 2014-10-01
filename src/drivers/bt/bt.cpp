@@ -159,7 +159,6 @@ DWORD WINAPI adatFogadThread( LPVOID lpPara )
   
 	while(1)
 	{
-		int DEBUG = 10;
 		if(globMehet == true)
 		{
 			/*printf("*******************Thread2***************\n");

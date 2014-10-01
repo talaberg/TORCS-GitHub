@@ -1,6 +1,8 @@
 /CVS
 /data
 /PaxHeaders.32765
+/runtime
+/runtimed
 *.xml
 *.exp
 *.exe
@@ -17,3 +19,15 @@
 *.mk
 *.rc
 *.desktop
+*.obj
+*.sbr
+*.idb
+*.pdb
+*.htm
+*.suo
+*.sln
+*.bsc
+*.user
+*.ncb
+*.map
+*.lib

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="Windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="9.00"
+	Version="9,00"
 	Name="bt"
 	ProjectGUID="{A0513CBB-8FE9-44F7-BBF3-7814EFB5132C}"
 	TargetFrameworkVersion="0"
@@ -368,6 +368,10 @@
 						PreprocessorDefinitions=""
 					/>
 				</FileConfiguration>
+			</File>
+			<File
+				RelativePath=".\PracticalSocket.cpp"
+				>
 			</File>
 			<File
 				RelativePath="spline.cpp"
