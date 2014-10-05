@@ -78,6 +78,7 @@
 	float globGaz = 0.0f;
 	float globFek = 0.0f;
 	int globValto = 0;
+	float globKerekFek[4] = {0.0, 0.0, 0.0, 0.0};
 ////////////////////////////////////////////////////////////////
 
 
@@ -281,7 +282,27 @@ DWORD WINAPI adatFogadThread( LPVOID lpPara )
 									globKuldes = false;
 							//		printf("SEND: %f\n",f);
 								}	 
-						  }	
+						  }
+						  else if(echoBuffer[5] == '0' && echoBuffer[6] == '6')
+						  {//front right brake
+							  globKerekFek[FRNT_RGT] = f;
+							//printf("Jobb elso fek: %f\n",f);
+						  }
+						  else if(echoBuffer[5] == '0' && echoBuffer[6] == '7')
+						  {//front left brake
+							  globKerekFek[FRNT_LFT] = f;
+							  //printf("Bal elso fek: %f\n",f);
+						  }
+						  else if(echoBuffer[5] == '0' && echoBuffer[6] == '8')
+						  {//rear right brake
+							  globKerekFek[REAR_RGT] = f;
+							  //printf("Jobb hatso fek: %f\n",f);
+						  }
+						  else if(echoBuffer[5] == '0' && echoBuffer[6] == '9')
+						  {//rear left brake
+							  globKerekFek[REAR_LFT] = f;
+							  //printf("Bal hatso fek: %f\n",f);
+						  }
 /*
 						printf("Kor: %f\nGaz: %f\nFek: %f\n", globKormany, globGaz, globFek);
 
@@ -979,6 +1000,11 @@ static void drive(int index, tCarElt* car, tSituation *s)
 	car->ctrl.steer = globKormany/(((car->_speed_x)/200)+1.4);
 	car->ctrl.accelCmd = globGaz;
 	car->ctrl.brakeCmd = globFek;
+	//TODO globKerekFek-nek értékátadás tesztelése, utána kikomment:
+	/*car->ctrl.BmeAbsbrakeCmd[FRNT_RGT] = globKerekFek[FRNT_RGT];
+	car->ctrl.BmeAbsbrakeCmd[FRNT_LFT] = globKerekFek[FRNT_LFT];
+	car->ctrl.BmeAbsbrakeCmd[REAR_RGT] = globKerekFek[REAR_RGT];
+	car->ctrl.BmeAbsbrakeCmd[REAR_LFT] = globKerekFek[REAR_LFT];*/
 //DEBUG
 	car->ctrl.BmeAbsEnable = 1;
 	for(int j = 0; j < 4; j++)
