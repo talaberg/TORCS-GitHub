@@ -979,6 +979,11 @@ static void drive(int index, tCarElt* car, tSituation *s)
 	car->ctrl.steer = globKormany/(((car->_speed_x)/200)+1.4);
 	car->ctrl.accelCmd = globGaz;
 	car->ctrl.brakeCmd = globFek;
+//DEBUG
+	car->ctrl.BmeAbsEnable = 1;
+	for(int j = 0; j < 4; j++)
+		car->ctrl.BmeAbsbrakeCmd[j] = globFek; 
+// \DEBUG
 	
 	if(elozoValto != globValto){
 		valtoHelyzet += globValto;

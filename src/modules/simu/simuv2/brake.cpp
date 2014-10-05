@@ -71,8 +71,22 @@ void SimBrakeSystemUpdate(tCar *car)
 {
 	tBrakeSyst	*brkSyst = &(car->brkSyst);
 	tdble	ctrl = car->ctrl->brakeCmd;
-
-	ctrl *= brkSyst->coeff;
-	car->wheel[FRNT_RGT].brake.pressure = car->wheel[FRNT_LFT].brake.pressure = ctrl * brkSyst->rep;
-	car->wheel[REAR_RGT].brake.pressure = car->wheel[REAR_LFT].brake.pressure = ctrl * (1 - brkSyst->rep);
+	if(car->ctrl->BmeAbsEnable)
+	{
+		ctrl = car->ctrl->BmeAbsbrakeCmd[FRNT_RGT] * brkSyst->coeff;	// ABS-braking front wheels
+		car->wheel[FRNT_RGT].brake.pressure = ctrl * brkSyst->rep;
+		ctrl = car->ctrl->BmeAbsbrakeCmd[FRNT_LFT] * brkSyst->coeff;
+		car->wheel[FRNT_LFT].brake.pressure = ctrl * brkSyst->rep;
+		
+		ctrl = car->ctrl->BmeAbsbrakeCmd[REAR_RGT] * brkSyst->coeff;	// ABS-braking rear wheels
+		car->wheel[REAR_RGT].brake.pressure = ctrl * (1 - brkSyst->rep);
+		ctrl = car->ctrl->BmeAbsbrakeCmd[REAR_LFT] * brkSyst->coeff;
+		car->wheel[REAR_LFT].brake.pressure = ctrl * (1 - brkSyst->rep);
+	}
+	else
+	{
+		ctrl *= brkSyst->coeff;
+		car->wheel[FRNT_RGT].brake.pressure = car->wheel[FRNT_LFT].brake.pressure = ctrl * brkSyst->rep;
+		car->wheel[REAR_RGT].brake.pressure = car->wheel[REAR_LFT].brake.pressure = ctrl * (1 - brkSyst->rep);
+	}
 }

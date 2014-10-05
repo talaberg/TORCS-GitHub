@@ -295,6 +295,8 @@ typedef struct {
     tPosd	corner[4];	/**< car's corners position */
     int		gear;	    	/**< current gear */
     tdble	fuel;	    	/**< remaining fuel (liters) */
+	tdble   fuel_consumption_total; // l
+	tdble   fuel_consumption_instant; // l/100km (>100 means infinity)
     tdble	enginerpm;
     tdble	enginerpmRedLine;
     tdble	enginerpmMax;
@@ -317,6 +319,8 @@ typedef struct {
 	tCollisionState collision_state; /**< collision state */
 } tPrivCar;
 /* structure access */
+#define _fuelTotal priv.fuel_consumption_total
+#define _fuelInstant priv.fuel_consumption_instant
 #define _driverIndex	priv.driverIndex
 #define _paramsHandle	priv.paramsHandle
 #define _carHandle	priv.carHandle
@@ -343,6 +347,8 @@ typedef struct {
     tdble	steer;	    /**< Steer command [-1.0, 1.0]  */
     tdble	accelCmd;   /**< Accelerator command [0.0, 1.0] */
     tdble	brakeCmd;   /**< Brake command [0.0, 1.0] */
+	BOOL	BmeAbsEnable;		// ABS Enable flag;
+	tdble	BmeAbsbrakeCmd[4];	// Brake pressure for each wheel in case of ABS is enabled
     tdble	clutchCmd;  /**< Clutch command [0.0, 1.0] */
     int		gear;  	    /**< [-1,6] for gear selection */
     int		raceCmd;    /**< command issued by the driver */
