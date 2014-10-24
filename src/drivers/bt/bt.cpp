@@ -78,7 +78,7 @@
 	float globGaz = 0.0f;
 	float globFek = 0.0f;
 	int globValto = 0;
-	float globKerekFek[4] = {0.0, 0.0, 0.0, 0.0};
+	tdble globKerekFek[4] = {0.0, 0.0, 0.0, 0.0};
 ////////////////////////////////////////////////////////////////
 
 
@@ -154,9 +154,9 @@ DWORD WINAPI adatFogadThread( LPVOID lpPara )
     if( hStdout == INVALID_HANDLE_VALUE )
         return 1;
 	
-	 // time_t seconds;
-	 // seconds = time (NULL);
-	 // printf ("%ld \n", seconds);
+	  time_t seconds;
+	  seconds = time (NULL);
+	  printf ("%ld \n", seconds);
   
 	while(1)
 	{
@@ -202,8 +202,8 @@ DWORD WINAPI adatFogadThread( LPVOID lpPara )
 					for (;;) 
 					{
 						// Block until receive message from a client
-						//	seconds = time (NULL);
-						//	printf ("Recive elott: %ld \n", seconds);
+							seconds = time (NULL);
+							printf ("Recive elott: %ld \n", seconds);
 
 						recvMsgSize = sock.recvFrom(echoBuffer, ECHOMAX, sourceAddress, sourcePort);
 
@@ -217,11 +217,11 @@ DWORD WINAPI adatFogadThread( LPVOID lpPara )
 						   *   @return number of bytes received and -1 for error
 						   *   @exception SocketException thrown if unable to receive datagram
 						   */
-						//	seconds = time (NULL);
-						//	printf ("Recive utan: %ld \n", seconds);
-						//printf("Ezt kaptam: |%s| \n",echoBuffer);
-						//	seconds = time (NULL);
-						//	printf ("KAPTAM: %ld \n", seconds);
+							seconds = time (NULL);
+							printf ("Recive utan: %ld \n", seconds);
+						printf("Ezt kaptam: |%s| \n",echoBuffer);
+							seconds = time (NULL);
+							printf ("KAPTAM: %ld \n", seconds);
 
 						char id[6];
 
