@@ -38,7 +38,7 @@
 
 	#include <iostream>
 	#include "PracticalSocket.h"
-
+	
 	const int ECHOMAX = 255; // Longest string to echo
 
     /***************************************************************************/
@@ -142,7 +142,7 @@ extern "C" int bt(tModInfo *modInfo)
 
 DWORD WINAPI adatFogadThread( LPVOID lpPara )
 {
-	
+	#define BME_BT_UDP_DATAPOS 8
 	HANDLE hStdout;
 
     TCHAR msgBuf[BUF_SIZE];
@@ -226,13 +226,14 @@ DWORD WINAPI adatFogadThread( LPVOID lpPara )
 						char id[6];
 
 						 //strncpy(id,echoBuffer,7);
-						 char arr[5];
+						 char arr[6];
 						 arr[0]=echoBuffer[8];
 						 arr[1]=echoBuffer[9];
 						 arr[2]=echoBuffer[10];
 						 arr[3]=echoBuffer[11];
 						 arr[4]=echoBuffer[12];
 						 arr[5]=echoBuffer[13];
+						 
 						
 						f = atof(arr);
 					//	printf("Ertek: %f\n", f);
@@ -251,6 +252,15 @@ DWORD WINAPI adatFogadThread( LPVOID lpPara )
 						 else if(echoBuffer[5] == '0' && echoBuffer[6] == '3')
 							 { // Fék
 								globFek = f;
+								for(int k = 0; k < 4; k++)
+								{
+									for(int i = 0; i < 6; i++)
+									 {
+										arr[i] = echoBuffer[BME_BT_UDP_DATAPOS + (k+1)*6 + i]
+									 }
+									 
+									 globKerekFek[k] = atof(arr);
+								 }
 							//	printf("FEK: %f\n",f);
 							 }
 						 else if(echoBuffer[5] == '0' && echoBuffer[6] == '4')
@@ -282,26 +292,6 @@ DWORD WINAPI adatFogadThread( LPVOID lpPara )
 									globKuldes = false;
 							//		printf("SEND: %f\n",f);
 								}	 
-						  }
-						  else if(echoBuffer[5] == '0' && echoBuffer[6] == '6')
-						  {//front right brake
-							  globKerekFek[FRNT_RGT] = f;
-							//printf("Jobb elso fek: %f\n",f);
-						  }
-						  else if(echoBuffer[5] == '0' && echoBuffer[6] == '7')
-						  {//front left brake
-							  globKerekFek[FRNT_LFT] = f;
-							  //printf("Bal elso fek: %f\n",f);
-						  }
-						  else if(echoBuffer[5] == '0' && echoBuffer[6] == '8')
-						  {//rear right brake
-							  globKerekFek[REAR_RGT] = f;
-							  //printf("Jobb hatso fek: %f\n",f);
-						  }
-						  else if(echoBuffer[5] == '0' && echoBuffer[6] == '9')
-						  {//rear left brake
-							  globKerekFek[REAR_LFT] = f;
-							  //printf("Bal hatso fek: %f\n",f);
 						  }
 /*
 						printf("Kor: %f\nGaz: %f\nFek: %f\n", globKormany, globGaz, globFek);
@@ -1001,16 +991,17 @@ static void drive(int index, tCarElt* car, tSituation *s)
 	car->ctrl.accelCmd = globGaz;
 	car->ctrl.brakeCmd = globFek;
 	//TODO globKerekFek-nek értékátadás tesztelése, utána kikomment:
-	/*car->ctrl.BmeAbsbrakeCmd[FRNT_RGT] = globKerekFek[FRNT_RGT];
+	car->ctrl.BmeAbsbrakeCmd[FRNT_RGT] = globKerekFek[FRNT_RGT];
 	car->ctrl.BmeAbsbrakeCmd[FRNT_LFT] = globKerekFek[FRNT_LFT];
 	car->ctrl.BmeAbsbrakeCmd[REAR_RGT] = globKerekFek[REAR_RGT];
-	car->ctrl.BmeAbsbrakeCmd[REAR_LFT] = globKerekFek[REAR_LFT];*/
+	car->ctrl.BmeAbsbrakeCmd[REAR_LFT] = globKerekFek[REAR_LFT];
 //DEBUG
+/*
 	car->ctrl.BmeAbsEnable = 1;
 	for(int j = 0; j < 4; j++)
 		car->ctrl.BmeAbsbrakeCmd[j] = globFek; 
 // \DEBUG
-	
+	*/
 	if(elozoValto != globValto){
 		valtoHelyzet += globValto;
 		
