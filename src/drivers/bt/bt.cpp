@@ -154,9 +154,9 @@ DWORD WINAPI adatFogadThread( LPVOID lpPara )
     if( hStdout == INVALID_HANDLE_VALUE )
         return 1;
 	
-	  time_t seconds;
-	  seconds = time (NULL);
-	  printf ("%ld \n", seconds);
+	  //time_t seconds;
+	  //seconds = time (NULL);
+	 // printf ("%ld \n", seconds);
   
 	while(1)
 	{
@@ -202,8 +202,8 @@ DWORD WINAPI adatFogadThread( LPVOID lpPara )
 					for (;;) 
 					{
 						// Block until receive message from a client
-							seconds = time (NULL);
-							printf ("Recive elott: %ld \n", seconds);
+							//seconds = time (NULL);
+							//printf ("Recive elott: %ld \n", seconds);
 
 						recvMsgSize = sock.recvFrom(echoBuffer, ECHOMAX, sourceAddress, sourcePort);
 
@@ -217,11 +217,11 @@ DWORD WINAPI adatFogadThread( LPVOID lpPara )
 						   *   @return number of bytes received and -1 for error
 						   *   @exception SocketException thrown if unable to receive datagram
 						   */
-							seconds = time (NULL);
-							printf ("Recive utan: %ld \n", seconds);
-						printf("Ezt kaptam: |%s| \n",echoBuffer);
-							seconds = time (NULL);
-							printf ("KAPTAM: %ld \n", seconds);
+							//seconds = time (NULL);
+							//printf ("Recive utan: %ld \n", seconds);
+						//printf("Ezt kaptam: |%s| \n",echoBuffer);
+							//seconds = time (NULL);
+							//printf ("KAPTAM: %ld \n", seconds);
 
 						char id[6];
 
@@ -242,12 +242,12 @@ DWORD WINAPI adatFogadThread( LPVOID lpPara )
 						 if(echoBuffer[5] == '0' && echoBuffer[6] == '1')
 							 { // Kormány
 								globKormany = -f;
-							//	printf("KORM: %f\n",f);
+								//printf("KORM: %f\n",f);
 							 }
 						 else if(echoBuffer[5] == '0' && echoBuffer[6] == '2')
 							 { // Gáz
 								globGaz = f;
-							//	printf("GAZ: %f\n",f);
+								//printf("GAZ: %f\n",f);
 							 }
 						 else if(echoBuffer[5] == '0' && echoBuffer[6] == '3')
 							 { // Fék
@@ -256,24 +256,25 @@ DWORD WINAPI adatFogadThread( LPVOID lpPara )
 								{
 									for(int i = 0; i < 6; i++)
 									 {
-										arr[i] = echoBuffer[BME_BT_UDP_DATAPOS + (k+1)*6 + i]
+										arr[i] = echoBuffer[BME_BT_UDP_DATAPOS + (k+1)*6 + i];
 									 }
 									 
 									 globKerekFek[k] = atof(arr);
+									 //printf("Kerek%d: %f\n",k,globKerekFek[k]);
 								 }
-							//	printf("FEK: %f\n",f);
+								//printf("FEK: %f\n",f);
 							 }
 						 else if(echoBuffer[5] == '0' && echoBuffer[6] == '4')
 							 { // Váltó		
 								if((f == 1))
 								{ // Fel
 									globValto = 1;
-							//		printf("VALT: %f\n",f);
+									//printf("VALT: %f\n",f);
 								 }
 								else if((f == -1))
 								{
 									globValto = -1;
-							//		printf("VALT: %f\n",f);
+									//printf("VALT: %f\n",f);
 								}
 								else
 								{
@@ -990,18 +991,13 @@ static void drive(int index, tCarElt* car, tSituation *s)
 	car->ctrl.steer = globKormany/(((car->_speed_x)/200)+1.4);
 	car->ctrl.accelCmd = globGaz;
 	car->ctrl.brakeCmd = globFek;
-	//TODO globKerekFek-nek értékátadás tesztelése, utána kikomment:
-	car->ctrl.BmeAbsbrakeCmd[FRNT_RGT] = globKerekFek[FRNT_RGT];
+
+	car->ctrl.BmeAbsbrakeCmd[FRNT_RGT] = globKerekFek[FRNT_RGT];//Egyes kerékfék értékek átadása
 	car->ctrl.BmeAbsbrakeCmd[FRNT_LFT] = globKerekFek[FRNT_LFT];
 	car->ctrl.BmeAbsbrakeCmd[REAR_RGT] = globKerekFek[REAR_RGT];
 	car->ctrl.BmeAbsbrakeCmd[REAR_LFT] = globKerekFek[REAR_LFT];
-//DEBUG
-/*
 	car->ctrl.BmeAbsEnable = 1;
-	for(int j = 0; j < 4; j++)
-		car->ctrl.BmeAbsbrakeCmd[j] = globFek; 
-// \DEBUG
-	*/
+
 	if(elozoValto != globValto){
 		valtoHelyzet += globValto;
 		
