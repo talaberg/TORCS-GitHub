@@ -157,6 +157,7 @@ DWORD WINAPI adatFogadThread( LPVOID lpPara )
 	  //time_t seconds;
 	  //seconds = time (NULL);
 	 // printf ("%ld \n", seconds);
+	//int BmeTimeCounter = 0;
   
 	while(1)
 	{
@@ -207,6 +208,7 @@ DWORD WINAPI adatFogadThread( LPVOID lpPara )
 
 						recvMsgSize = sock.recvFrom(echoBuffer, ECHOMAX, sourceAddress, sourcePort);
 
+
 						  /*   int recvFrom(void *buffer, int bufferLen, string &sourceAddress, unsigned short &sourcePort) throw(SocketException);
 						   
 						   *   Read read up to bufferLen bytes data from this socket. The given buffer is where the data will be placed.
@@ -234,10 +236,9 @@ DWORD WINAPI adatFogadThread( LPVOID lpPara )
 						 arr[4]=echoBuffer[12];
 						 arr[5]=echoBuffer[13];
 						 
-						
+
 						f = atof(arr);
 					//	printf("Ertek: %f\n", f);
-							
 
 						 if(echoBuffer[5] == '0' && echoBuffer[6] == '1')
 							 { // Kormány
@@ -252,17 +253,23 @@ DWORD WINAPI adatFogadThread( LPVOID lpPara )
 						 else if(echoBuffer[5] == '0' && echoBuffer[6] == '3')
 							 { // Fék
 								globFek = f;
+								//printf("FEK: %f\n",f);
 								for(int k = 0; k < 4; k++)
 								{
 									for(int i = 0; i < 6; i++)
 									 {
-										arr[i] = echoBuffer[BME_BT_UDP_DATAPOS + (k+1)*6 + i];
+										arr[i] = echoBuffer[BME_BT_UDP_DATAPOS + (k+1)*8 + i];
 									 }
 									 
 									 globKerekFek[k] = atof(arr);
-									 //printf("Kerek%d: %f\n",k,globKerekFek[k]);
+
+									/* if(globKerekFek[k] == 1.0)
+									 {*/
+										//printf("Kerek%d: %f\n",k,globKerekFek[k]);
+									/* }*/
 								 }
-								//printf("FEK: %f\n",f);
+
+								
 							 }
 						 else if(echoBuffer[5] == '0' && echoBuffer[6] == '4')
 							 { // Váltó		
@@ -564,7 +571,7 @@ DWORD WINAPI adatKuldThread( LPVOID lpParam )
 							strcat(str,str2);	
 							sock.sendTo(str, strlen, IPCIM, echoServPort); //SEND *100003$
 							Sleep(2);
-						//	printf("kuld_Wheel_1_SlipAccel: %s\n",str);
+							printf("kuld_Wheel_1_SlipAccel: %s\n",str);
 							
 							}
 
@@ -575,7 +582,7 @@ DWORD WINAPI adatKuldThread( LPVOID lpParam )
 							strcat(str,str2);	
 							sock.sendTo(str, strlen, IPCIM, echoServPort); //SEND *110003$
 							Sleep(2);
-					//		printf("kuld_Wheel_2_SlipAccel: %s\n",str);
+							printf("kuld_Wheel_2_SlipAccel: %s\n",str);
 							
 							}
 
@@ -586,7 +593,7 @@ DWORD WINAPI adatKuldThread( LPVOID lpParam )
 							strcat(str,str2);	
 							sock.sendTo(str, strlen, IPCIM, echoServPort); //SEND *120003$
 							Sleep(2);
-					//		printf("kuld_Wheel_3_SlipAccel: %s\n",str);
+							printf("kuld_Wheel_3_SlipAccel: %s\n",str);
 							
 							}
 
@@ -597,7 +604,7 @@ DWORD WINAPI adatKuldThread( LPVOID lpParam )
 							strcat(str,str2);	
 							sock.sendTo(str, strlen, IPCIM, echoServPort); //SEND *130003$
 							Sleep(2);
-					//		printf("kuld_Wheel_4_SlipAccel: %s\n",str);
+							printf("kuld_Wheel_4_SlipAccel: %s\n",str);
 							
 							}
 
