@@ -478,10 +478,52 @@ DWORD WINAPI adatKuldThread( LPVOID lpParam )
 						//	printf("kuld_Wheel_4_spinvel: %s\n",str);
 							
 							}
-						
+														if(globCar->_wheelSlipAccel(0) !=0)
+							{
+							strcpy(str,"*100003$");
+							sprintf(str2, "%.2f",globCar->_wheelSlipAccel(0));
+							strcat(str,str2);	
+							sock.sendTo(str, strlen, IPCIM, echoServPort); //SEND *100003$
+							Sleep(2);
+							//printf("kuld_Wheel_1_SlipAccel: %s\n",str);
+							
+							}
+
+							if(globCar->_wheelSlipAccel(1) !=0)
+							{
+							strcpy(str,"*110003$");
+							sprintf(str2, "%.2f",globCar->_wheelSlipAccel(1));
+							strcat(str,str2);	
+							sock.sendTo(str, strlen, IPCIM, echoServPort); //SEND *110003$
+							Sleep(2);
+							//printf("kuld_Wheel_2_SlipAccel: %s\n",str);
+							
+							}
+
+							if(globCar->_wheelSlipAccel(2) !=0)
+							{
+							strcpy(str,"*120003$");
+							sprintf(str2, "%.2f",globCar->_wheelSlipAccel(2));
+							strcat(str,str2);	
+							sock.sendTo(str, strlen, IPCIM, echoServPort); //SEND *120003$
+							Sleep(2);
+							//printf("kuld_Wheel_3_SlipAccel: %s\n",str);
+							
+							}
+
+							if(globCar->_wheelSlipAccel(3) !=0)
+							{
+							strcpy(str,"*130003$");
+							sprintf(str2, "%.2f",globCar->_wheelSlipAccel(3));
+							strcat(str,str2);	
+							sock.sendTo(str, strlen, IPCIM, echoServPort); //SEND *130003$
+							Sleep(2);
+							//printf("kuld_Wheel_4_SlipAccel: %s\n",str);
+							
+							}
 							
 						
-							}
+				}
 						
 
 
@@ -563,7 +605,7 @@ DWORD WINAPI adatKuldThread( LPVOID lpParam )
 
 						
 							//SLIP SIDE Accel.
-
+							
 							if(globCar->_wheelSlipAccel(0) !=0)
 							{
 							strcpy(str,"*100003$");
@@ -571,7 +613,7 @@ DWORD WINAPI adatKuldThread( LPVOID lpParam )
 							strcat(str,str2);	
 							sock.sendTo(str, strlen, IPCIM, echoServPort); //SEND *100003$
 							Sleep(2);
-							printf("kuld_Wheel_1_SlipAccel: %s\n",str);
+							//printf("kuld_Wheel_1_SlipAccel: %s\n",str);
 							
 							}
 
@@ -582,7 +624,7 @@ DWORD WINAPI adatKuldThread( LPVOID lpParam )
 							strcat(str,str2);	
 							sock.sendTo(str, strlen, IPCIM, echoServPort); //SEND *110003$
 							Sleep(2);
-							printf("kuld_Wheel_2_SlipAccel: %s\n",str);
+							//printf("kuld_Wheel_2_SlipAccel: %s\n",str);
 							
 							}
 
@@ -593,7 +635,7 @@ DWORD WINAPI adatKuldThread( LPVOID lpParam )
 							strcat(str,str2);	
 							sock.sendTo(str, strlen, IPCIM, echoServPort); //SEND *120003$
 							Sleep(2);
-							printf("kuld_Wheel_3_SlipAccel: %s\n",str);
+							//printf("kuld_Wheel_3_SlipAccel: %s\n",str);
 							
 							}
 
@@ -604,7 +646,7 @@ DWORD WINAPI adatKuldThread( LPVOID lpParam )
 							strcat(str,str2);	
 							sock.sendTo(str, strlen, IPCIM, echoServPort); //SEND *130003$
 							Sleep(2);
-							printf("kuld_Wheel_4_SlipAccel: %s\n",str);
+							//printf("kuld_Wheel_4_SlipAccel: %s\n",str);
 							
 							}
 
