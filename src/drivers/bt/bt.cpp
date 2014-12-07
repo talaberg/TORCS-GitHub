@@ -206,27 +206,8 @@ DWORD WINAPI adatFogadThread( LPVOID lpPara )
 					for (;;) 
 					{
 						// Block until receive message from a client
-							//seconds = time (NULL);
-							//printf ("Recive elott: %ld \n", seconds);
 
 						recvMsgSize = sock.recvFrom(echoBuffer, ECHOMAX, sourceAddress, sourcePort);
-
-
-						  /*   int recvFrom(void *buffer, int bufferLen, string &sourceAddress, unsigned short &sourcePort) throw(SocketException);
-						   
-						   *   Read read up to bufferLen bytes data from this socket. The given buffer is where the data will be placed.
-						   *   @param buffer buffer to receive data
-						   *   @param bufferLen maximum number of bytes to receive
-						   *   @param sourceAddress address of datagram source
-						   *   @param sourcePort port of data source
-						   *   @return number of bytes received and -1 for error
-						   *   @exception SocketException thrown if unable to receive datagram
-						   */
-							//seconds = time (NULL);
-							//printf ("Recive utan: %ld \n", seconds);
-						//printf("Ezt kaptam: |%s| \n",echoBuffer);
-							//seconds = time (NULL);
-							//printf ("KAPTAM: %ld \n", seconds);
 
 						char id[6];
 
@@ -244,53 +225,47 @@ DWORD WINAPI adatFogadThread( LPVOID lpPara )
 					//	printf("Ertek: %f\n", f);
 
 						 if(echoBuffer[5] == '0' && echoBuffer[6] == '1')
-							 { // Kormány
-								globKormany = -f;
-								//printf("KORM: %f\n",f);
-							 }
+						 { // Kormány
+							globKormany = -f;
+							//printf("KORM: %f\n",f);
+						 }
 						 else if(echoBuffer[5] == '0' && echoBuffer[6] == '2')
-							 { // Gáz
-								globGaz = f;
-								//printf("GAZ: %f\n",f);
-							 }
+						 { // Gáz
+							globGaz = f;
+							//printf("GAZ: %f\n",f);
+						 }
 						 else if(echoBuffer[5] == '0' && echoBuffer[6] == '3')
-							 { // Fék
-								globFek = f;
-								//printf("FEK: %f\n",f);
-								for(int k = 0; k < 4; k++)
-								{
-									for(int i = 0; i < 6; i++)
-									 {
-										arr[i] = echoBuffer[BME_BT_UDP_DATAPOS + (k+1)*8 + i];
-									 }
-									 
-									 globKerekFek[k] = atof(arr);
+						 { // Fék
+							globFek = f;
+							//printf("FEK: %f\n",f);
+							for(int k = 0; k < 4; k++)
+							{
+								for(int i = 0; i < 6; i++)
+								 {
+									arr[i] = echoBuffer[BME_BT_UDP_DATAPOS + (k+1)*8 + i];
+								 }								 
+								 globKerekFek[k] = atof(arr);
 
-									/* if(globKerekFek[k] == 1.0)
-									 {*/
-										//printf("Kerek%d: %f\n",k,globKerekFek[k]);
-									/* }*/
-								 }
-
+							 }
 								
-							 }
+						 }
 						 else if(echoBuffer[5] == '0' && echoBuffer[6] == '4')
-							 { // Váltó		
-								if((f == 1))
-								{ // Fel
-									globValto = 1;
-									//printf("VALT: %f\n",f);
-								 }
-								else if((f == -1))
-								{
-									globValto = -1;
-									//printf("VALT: %f\n",f);
-								}
-								else
-								{
-									globValto = 0;
-								}	 
-							 }
+						 { // Váltó		
+							if((f == 1))
+							{ // Fel
+								globValto = 1;
+								//printf("VALT: %f\n",f);
+							}
+							else if((f == -1))
+							{
+								globValto = -1;
+								//printf("VALT: %f\n",f);
+							}
+							else
+							{
+								globValto = 0;
+							}	 
+						 }
 						  else if(echoBuffer[5] == '0' && echoBuffer[6] == '5')
 						  {//SEND or DON't send
 							  if((f == 1))
@@ -304,15 +279,6 @@ DWORD WINAPI adatFogadThread( LPVOID lpPara )
 							//		printf("SEND: %f\n",f);
 								}	 
 						  }
-/*
-						printf("Kor: %f\nGaz: %f\nFek: %f\n", globKormany, globGaz, globFek);
-
-						globCar->ctrl.steer = globKormany;
-						globCar->ctrl.accelCmd = globGaz;
-						globCar->ctrl.brakeCmd = globFek;
-						
-						printf("GLOB Kor: %f\nGaz: %f\nFek: %f\n", globCar->ctrl.steer, globCar->ctrl.accelCmd, globCar->ctrl.brakeCmd);
-*/
 						Sleep(2);
 					}
 			  } 
@@ -325,8 +291,6 @@ DWORD WINAPI adatFogadThread( LPVOID lpPara )
 		Sleep(1);
 	}
 }
-
-
 
 DWORD WINAPI adatKuldThread( LPVOID lpParam ) 
 {    
@@ -354,25 +318,7 @@ DWORD WINAPI adatKuldThread( LPVOID lpParam )
 				
 				if(globMehet == true)
 				{ // Driver már 1x lefutott-e, hogy a globCar ne legyen NULL
-				//	try {
-						
-						/**
-					   void sendTo(const void *buffer, int bufferLen, const string &foreignAddress, unsigned short foreignPort) throw(SocketException);
-
-					   *   Send the given buffer as a UDP datagram to the  specified address/port
-					   *   @param buffer buffer to be written
-					   *   @param bufferLen number of bytes to write
-					   *   @param foreignAddress address (IP address or name) to send to
-					   *   @param foreignPort port number to send to
-					   *   @return true if send is successful
-					   *   @exception SocketException thrown if unable to send datagram
-					   */
-
-						/** 
-						Data known only by the driver  => *0100XX$ 
-						XX is the ID of the property.
-						*/
-
+				
 						if(globCar->_enginerpm !=0)
 						{
 							strcpy(str,"*010001$");
@@ -382,9 +328,8 @@ DWORD WINAPI adatKuldThread( LPVOID lpParam )
 							Sleep(2);
 							//printf("engine rpm: %s\n",str);
 						 //printf("Elkuldtem es varok 100ms-t\n");
-						}		
-
-						
+						}
+						//--------------------------------------------------------------------
 						//*140001$ => Slip value							
 						//ABS functionality
 						if(globCar->_speed_x != 0)
@@ -406,7 +351,7 @@ DWORD WINAPI adatKuldThread( LPVOID lpParam )
 							Sleep(2);
 							//printf("slip: %s\n",str);						
 						}
-
+						//--------------------------------------------------------------------
 						//SPIN VELOCITY						
 						strcpy(str,"*150001$");
 						sprintf(str2, "%.2f",globCar->_wheelSpinVel(0));
@@ -419,11 +364,24 @@ DWORD WINAPI adatKuldThread( LPVOID lpParam )
 						strcat(str,str2);
 						sock.sendTo(str, strlength, IPCIM, echoServPort); //SEND *150001$
 						Sleep(2);
-				//		printf("kuld_Wheel_spinvel: %s\n",str);
-						
-
+						//printf("kuld_Wheel_spinvel: %s\n",str);
+						//--------------------------------------------------------------------
+						//SLIP SIDE
+						strcpy(str,"*150002$");
+						sprintf(str2, "%.2f",globCar->_wheelSlipSide(0));
+						strcat(str,str2);	
+						sprintf(str2, "%.2f",globCar->_wheelSlipSide(1));
+						strcat(str,str2);
+						sprintf(str2, "%.2f",globCar->_wheelSlipSide(2));
+						strcat(str,str2);
+						sprintf(str2, "%.2f",globCar->_wheelSlipSide(3));
+						strcat(str,str2);	
+						sock.sendTo(str, strlength, IPCIM, echoServPort); //SEND *150002$
+						Sleep(2);
+						//printf("kuld__wheel_SlipSide: %s\n",str);
+						//--------------------------------------------------------------------
 						//SLIP ACCEL
-						strcpy(str,"*100003$");
+						strcpy(str,"*150003$");
 						sprintf(str2, "%.2f",globCar->_wheelSlipAccel(0));
 						strcat(str,str2);
 						sprintf(str2, "%.2f",globCar->_wheelSlipAccel(1));
@@ -432,14 +390,15 @@ DWORD WINAPI adatKuldThread( LPVOID lpParam )
 						strcat(str,str2);
 						sprintf(str2, "%.2f",globCar->_wheelSlipAccel(3));
 						strcat(str,str2);
-						sock.sendTo(str, strlength, IPCIM, echoServPort); //SEND *100003$
+						sock.sendTo(str, strlength, IPCIM, echoServPort); //SEND *150003$
 						Sleep(2);
-						//printf("kuld_Wheel_1_SlipAccel: %s\n",str);						
-								
+						//printf("kuld_Wheel_SlipAccel: %s\n",str);	
 
+
+					//These messages are only sent when a request arrives.
 					if (globKuldes == true )
 					{
-						/** Data known only by the driver */
+						//FUEL => *010004$ 
 						strcpy(str,"*010004$");
 						sprintf(str2, "%.2f",globCar->_fuelInstant);
 						strcat(str,str2);
@@ -447,223 +406,37 @@ DWORD WINAPI adatKuldThread( LPVOID lpParam )
 						strcat(str,str2);
 						sock.sendTo(str, strlength, IPCIM, echoServPort); //SEND *010002$
 						Sleep(2);
-					//	printf("fuel: %s\n",str);
-							/*
-							}	*/							
-							
-								//SLIP SIDE
-
-						if(globCar->_wheelSlipSide(0) !=0)
-						{
-							strcpy(str,"*100002$");
-							sprintf(str2, "%.2f",globCar->_wheelSlipSide(0));
-							strcat(str,str2);	
-							sock.sendTo(str, strlength, IPCIM, echoServPort); //SEND *100002$
-							Sleep(2);
-						//	printf("kuld__wheel_1_SlipSide: %s\n",str);
-							
-						}
-
-						if(globCar->_wheelSlipSide(1) !=0)
-						{
-							strcpy(str,"*110002$");
-							sprintf(str2, "%.2f",globCar->_wheelSlipSide(1));
-							strcat(str,str2);	
-							sock.sendTo(str, strlength, IPCIM, echoServPort); //SEND *110002$
-							Sleep(2);
-					//		printf("kuld_wheel_2_SlipSide: %s\n",str);
-							
-						}
-
-						if(globCar->_wheelSlipSide(2) !=0)
-						{
-							strcpy(str,"*120002$");
-							sprintf(str2, "%.2f",globCar->_wheelSlipSide(2));
-							strcat(str,str2);	
-							sock.sendTo(str, strlength, IPCIM, echoServPort); //SEND *120002$
-							Sleep(2);
-						//	printf("kuld_wheel_3_SlipSide: %s\n",str);
-							
-						}
-
-						if(globCar->_wheelSlipSide(3) !=0)
-						{
-							strcpy(str,"*130002$");
-							sprintf(str2, "%.2f",globCar->_wheelSlipSide(3));
-							strcat(str,str2);	
-							sock.sendTo(str, strlength, IPCIM, echoServPort); //SEND *130002$
-							Sleep(2);
-						//	printf("kuld_wheel_4_SlipSide: %s\n",str);
-						}
-							
-
-						
-
-						
-							//SLIP SIDE Accel.
-							
-						if(globCar->_wheelSlipAccel(0) !=0)
-						{
-							strcpy(str,"*100003$");
-							sprintf(str2, "%.2f",globCar->_wheelSlipAccel(0));
-							strcat(str,str2);	
-							sock.sendTo(str, strlength, IPCIM, echoServPort); //SEND *100003$
-							Sleep(2);
-							//printf("kuld_Wheel_1_SlipAccel: %s\n",str);
-							
-						}
-
-						if(globCar->_wheelSlipAccel(1) !=0)
-						{
-							strcpy(str,"*110003$");
-							sprintf(str2, "%.2f",globCar->_wheelSlipAccel(1));
-							strcat(str,str2);	
-							sock.sendTo(str, strlength, IPCIM, echoServPort); //SEND *110003$
-							Sleep(2);
-							//printf("kuld_Wheel_2_SlipAccel: %s\n",str);
-							
-						}
-
-						if(globCar->_wheelSlipAccel(2) !=0)
-						{
-							strcpy(str,"*120003$");
-							sprintf(str2, "%.2f",globCar->_wheelSlipAccel(2));
-							strcat(str,str2);	
-							sock.sendTo(str, strlength, IPCIM, echoServPort); //SEND *120003$
-							Sleep(2);
-							//printf("kuld_Wheel_3_SlipAccel: %s\n",str);
-							
-						}
-
-						if(globCar->_wheelSlipAccel(3) !=0)
-						{
-							strcpy(str,"*130003$");
-							sprintf(str2, "%.2f",globCar->_wheelSlipAccel(3));
-							strcat(str,str2);	
-							sock.sendTo(str, strlength, IPCIM, echoServPort); //SEND *130003$
-							Sleep(2);
-							//printf("kuld_Wheel_4_SlipAccel: %s\n",str);
-							
-						}
-
-						if(globCar->_speed_x !=0)
-						{
-							strcpy(str,"*020004$");
-							sprintf(str2, "%.2f",globCar->_speed_x);
-							strcat(str,str2);	
-							sock.sendTo(str, strlength, IPCIM, echoServPort); //SEND *020004$
-							Sleep(2);
-				//			printf("kuld_car_speed_X: %s\n",str);
-							
-						}
-
-							/*
-							Public info on the cars => *0200XX$ 
-							XX is the ID of the property.
-							*/
-
-							/* Position XYZ */
-
-						if(globCar->_pos_X !=0)
-						{
-							strcpy(str,"*020001$");
-							sprintf(str2, "%.2f",globCar->_pos_X);
-							strcat(str,str2);	
-							sock.sendTo(str, strlength, IPCIM, echoServPort); //SEND *020001$
-							Sleep(2);
-					//		printf("kuld_car_pos_X: %s\n",str);
-							
-						}
-
-						if(globCar->_pos_Y !=0)
-						{
-							strcpy(str,"*020002$");
-							sprintf(str2, "%.2f",globCar->_pos_Y);
-							strcat(str,str2);	
-							sock.sendTo(str, strlength, IPCIM, echoServPort); //SEND *020002$
-							Sleep(2);
-					//		printf("kuld_car_pos_Y: %s\n",str);
-							
-						}
-
-						if(globCar->_pos_Z !=0)
-						{
-							strcpy(str,"*020003$");
-							sprintf(str2, "%.2f",globCar->_pos_Z);
-							strcat(str,str2);	
-							sock.sendTo(str, strlength, IPCIM, echoServPort); //SEND *020003$
-							Sleep(2);
-					//		printf("kuld_car_pos_Z: %s\n",str);
-							
-						}
-
-
-							/* Speed XYZ */
-
-			
-						if(globCar->_speed_y !=0)
-						{
-							strcpy(str,"*020005$");
-							sprintf(str2, "%.2f",globCar->_speed_y);
-							strcat(str,str2);	
-							sock.sendTo(str, strlength, IPCIM, echoServPort); //SEND *020005$
-							Sleep(2);
-				//			printf("kuld_car_speed_Y: %s\n",str);
-							
-						}
-
-						if(globCar->_speed_z !=0)
-						{
-							strcpy(str,"*020006$");
-							sprintf(str2, "%.2f",globCar->_speed_z);
-							strcat(str,str2);	
-							sock.sendTo(str, strlength, IPCIM, echoServPort); //SEND *020006$
-							Sleep(2);
-				//			printf("kuld_car_speed_Z: %s\n",str);
-							
-						}
-
-							/* Acc XYZ */
-						if(globCar->_accel_x !=0)
-						{
-							strcpy(str,"*020007$");
-							sprintf(str2, "%.2f",globCar->_accel_x);
-							strcat(str,str2);	
-							sock.sendTo(str, strlength, IPCIM, echoServPort); //SEND *020007$
-							Sleep(2);
-				//			printf("kuld_car_acc_X: %s\n",str);
-							
-						}
-
-						if(globCar->_accel_y !=0)
-						{
-							strcpy(str,"*020008$");
-							sprintf(str2, "%.2f",globCar->_accel_y);
-							strcat(str,str2);	
-							sock.sendTo(str, strlength, IPCIM, echoServPort); //SEND *020008$
-							Sleep(2);
-			//				printf("kuld_car_acc_Y: %s\n",str);
-							
-						}
-
-						if(globCar->_accel_z !=0)
-						{
-							strcpy(str,"*020009$");
-							sprintf(str2, "%.2f",globCar->_accel_z);
-							strcat(str,str2);	
-							sock.sendTo(str, strlength, IPCIM, echoServPort); //SEND *020009$
-							Sleep(2);
-			//				printf("kuld_car_acc_Z: %s\n",str);
-							
-						}
+						//printf("fuel: %s\n",str);	
+						//--------------------------------------------------------------------
+						//PUBLIC INFO on the cars => *020010$ 
+						strcpy(str,"*020010$");
+						//POS XYZ
+						sprintf(str2, "%.2f",globCar->_pos_X);							
+						strcat(str,str2);	
+						sprintf(str2, "%.2f",globCar->_pos_Y);
+						strcat(str,str2);
+						sprintf(str2, "%.2f",globCar->_pos_Z);
+						strcat(str,str2);
+						//SPEED XYZ
+						sprintf(str2, "%.2f",globCar->_speed_x);
+						strcat(str,str2);
+						sprintf(str2, "%.2f",globCar->_speed_y);
+						strcat(str,str2);
+						sprintf(str2, "%.2f",globCar->_speed_z);
+						strcat(str,str2);
+						//ACCEL XYZ
+						sprintf(str2, "%.2f",globCar->_accel_x);
+						strcat(str,str2);
+						sprintf(str2, "%.2f",globCar->_accel_y);
+						strcat(str,str2);
+						sprintf(str2, "%.2f",globCar->_accel_z);
+						strcat(str,str2);	
+						sock.sendTo(str, strlength, IPCIM, echoServPort); //SEND *020010$
+						Sleep(2);
+						//printf("kuld_car_info_X: %s\n",str);
 
 					}
 					
-				//} catch (SocketException &e) 
-			//			{
-			//		cerr << e.what() << endl;
-			//		return 1;
-			//	}
 				} // globMehet if vége
 			}
     return 0; 
@@ -740,13 +513,11 @@ static int InitFuncPt(int index, void *pt)
 	return 0;
 }
 
-
 // Called for every track change or new race.
 static void initTrack(int index, tTrack* track, void *carHandle, void **carParmHandle, tSituation *s)
 {
 	driver[index]->initTrack(track, carHandle, carParmHandle, s);
 }
-
 
 // Start a new race.
 static void newRace(int index, tCarElt* car, tSituation *s)
@@ -754,24 +525,10 @@ static void newRace(int index, tCarElt* car, tSituation *s)
 	driver[index]->newRace(car, s);
 }
 
-
 // Drive during race.
 static void drive(int index, tCarElt* car, tSituation *s)
 {
 	memset(&car->ctrl,0,sizeof( tCarCtrl ) ) ;
-/*	float angle ;
-	const float SC = 1.0 ;
-	angle = RtTrackSideTgAngleL (&(car->_trkPos)) - car->_yaw;
-	NORM_PI_PI ( angle ) ; // put t h e ang l e b a c k in t h e r ange f rom -PI t o PI
-	angle -= SC*car->_trkPos.toMiddle/car->_trkPos.seg->width ;
-*/
-	// s e t up t h e v a l u e s t o r e turn
-/*	car->ctrl.steer = angle / car->_steerLock ;
-	car->ctrl.gear = 1 ; // f i r s t g e a r
-	car->ctrl.accelCmd = 1.0f ; // 30% a c c e l e r a t o r p e d a
-	car->ctrl.brakeCmd = 0.0f ; // nobrakes
-	*/
-	//Sleep(10000);
 
 //	if(globMehet == false){
 	//	printf("*********************************************************************************************************************************");
@@ -779,7 +536,6 @@ static void drive(int index, tCarElt* car, tSituation *s)
 	//	car->ctrl.gear = 1;
 		globMehet = true;
 	//}
-
 
 //	car->_speed_x != 0
 	car->ctrl.steer = globKormany/(((car->_speed_x)/200)+1.4);
@@ -792,24 +548,24 @@ static void drive(int index, tCarElt* car, tSituation *s)
 	car->ctrl.BmeAbsbrakeCmd[REAR_LFT] = globKerekFek[REAR_LFT];
 	car->ctrl.BmeAbsEnable = 1;
 
-	if(elozoValto != globValto){
+	if(elozoValto != globValto)
+	{
 		valtoHelyzet += globValto;
 		
-		if(valtoHelyzet > 6 || valtoHelyzet < -1){
+		if(valtoHelyzet > 6 || valtoHelyzet < -1)
+		{
 			valtoHelyzet -= globValto;
 		}
 
 		car->ctrl.gear = valtoHelyzet; 
 		valtottam = false;
-	}else{
+	}
+	else
+	{
 		car->ctrl.gear = valtoHelyzet;
 	}
-
 	elozoValto = globValto;
 
-	//kerek = car->priv.wheel[1].spinVel; û
-	
-	//driver[index]->drive(s);
 }
 
 
