@@ -42,6 +42,8 @@
 	#include <iostream>
 	#include "PracticalSocket.h"
 	
+	void sfloat2fixstring(char* str, float f);
+
 	const int ECHOMAX = 255; // Longest string to echo
 
     /***************************************************************************/
@@ -52,6 +54,7 @@
 	const int REC_PORT = 9999;	   //given local PORT to construct UDP socket 
 	unsigned short echoServPort;
 	#define MAX_STR 80
+	#define TMP_STR 10
 
 
 ///////////////////// T H R E A D /////////////////////////////
@@ -309,7 +312,7 @@ DWORD WINAPI adatKuldThread( LPVOID lpParam )
 			int strlength = MAX_STR;
 
 			char* str = new char[MAX_STR];
-			char* str2 = new char[10];
+			char* str2 = new char[TMP_STR];
 
 			UDPSocket sock; //Construct a UDP socket
 
@@ -324,7 +327,7 @@ DWORD WINAPI adatKuldThread( LPVOID lpParam )
 							strcpy(str,"*010001$");
 							sprintf(str2, "%.2f",globCar->_enginerpm);
 							strcat(str,str2);	
-							sock.sendTo(str, strlength, IPCIM, echoServPort); //SEND *010001$
+							sock.sendTo(str, 16, IPCIM, echoServPort); //SEND *010001$
 							Sleep(2);
 							//printf("engine rpm: %s\n",str);
 						 //printf("Elkuldtem es varok 100ms-t\n");
@@ -347,50 +350,50 @@ DWORD WINAPI adatKuldThread( LPVOID lpParam )
 					
 							sprintf(str2, "%.5f",(slip) );
 							strcat(str,str2);
-							sock.sendTo(str, strlength, IPCIM, echoServPort); //SEND *140001$
+							sock.sendTo(str, 24, IPCIM, echoServPort); //SEND *140001$
 							Sleep(2);
 							//printf("slip: %s\n",str);						
 						}
 						//--------------------------------------------------------------------
 						//SPIN VELOCITY						
-						strcpy(str,"*150001$");
-						sprintf(str2, "%.2f",globCar->_wheelSpinVel(0));
-						strcat(str,str2);	
-						sprintf(str2, "%.2f",globCar->_wheelSpinVel(1));
+						strcpy(str,"*150001$");						
+						sfloat2fixstring(str2,globCar->_wheelSpinVel(0));
+						strcat(str,str2);						
+						sfloat2fixstring(str2,globCar->_wheelSpinVel(1));
 						strcat(str,str2);
-						sprintf(str2, "%.2f",globCar->_wheelSpinVel(2));
+						sfloat2fixstring(str2,globCar->_wheelSpinVel(2));
 						strcat(str,str2);
-						sprintf(str2, "%.2f",globCar->_wheelSpinVel(3));
+						sfloat2fixstring(str2,globCar->_wheelSpinVel(3));
 						strcat(str,str2);
-						sock.sendTo(str, strlength, IPCIM, echoServPort); //SEND *150001$
+						sock.sendTo(str, 40, IPCIM, echoServPort); //SEND *150001$
 						Sleep(2);
 						//printf("kuld_Wheel_spinvel: %s\n",str);
 						//--------------------------------------------------------------------
 						//SLIP SIDE
 						strcpy(str,"*150002$");
-						sprintf(str2, "%.2f",globCar->_wheelSlipSide(0));
+						sfloat2fixstring(str2,globCar->_wheelSlipSide(0));
 						strcat(str,str2);	
-						sprintf(str2, "%.2f",globCar->_wheelSlipSide(1));
+						sfloat2fixstring(str2,globCar->_wheelSlipSide(1));
 						strcat(str,str2);
-						sprintf(str2, "%.2f",globCar->_wheelSlipSide(2));
+						sfloat2fixstring(str2,globCar->_wheelSlipSide(2));
 						strcat(str,str2);
-						sprintf(str2, "%.2f",globCar->_wheelSlipSide(3));
+						sfloat2fixstring(str2,globCar->_wheelSlipSide(3));
 						strcat(str,str2);	
-						sock.sendTo(str, strlength, IPCIM, echoServPort); //SEND *150002$
+						sock.sendTo(str, 40, IPCIM, echoServPort); //SEND *150002$
 						Sleep(2);
 						//printf("kuld__wheel_SlipSide: %s\n",str);
 						//--------------------------------------------------------------------
 						//SLIP ACCEL
 						strcpy(str,"*150003$");
-						sprintf(str2, "%.2f",globCar->_wheelSlipAccel(0));
+						sfloat2fixstring(str2,globCar->_wheelSlipAccel(0));
 						strcat(str,str2);
-						sprintf(str2, "%.2f",globCar->_wheelSlipAccel(1));
+						sfloat2fixstring(str2,globCar->_wheelSlipAccel(1));
 						strcat(str,str2);
-						sprintf(str2, "%.2f",globCar->_wheelSlipAccel(2));
+						sfloat2fixstring(str2,globCar->_wheelSlipAccel(2));
 						strcat(str,str2);
-						sprintf(str2, "%.2f",globCar->_wheelSlipAccel(3));
+						sfloat2fixstring(str2,globCar->_wheelSlipAccel(3));
 						strcat(str,str2);
-						sock.sendTo(str, strlength, IPCIM, echoServPort); //SEND *150003$
+						sock.sendTo(str, 40, IPCIM, echoServPort); //SEND *150003$
 						Sleep(2);
 						//printf("kuld_Wheel_SlipAccel: %s\n",str);	
 
@@ -400,38 +403,38 @@ DWORD WINAPI adatKuldThread( LPVOID lpParam )
 					{
 						//FUEL => *010004$ 
 						strcpy(str,"*010004$");
-						sprintf(str2, "%.2f",globCar->_fuelInstant);
+						sfloat2fixstring(str2,globCar->_fuelInstant);
 						strcat(str,str2);
-						sprintf(str2, "%.2f",globCar->_fuel);
+						sfloat2fixstring(str2,globCar->_fuel);
 						strcat(str,str2);
-						sock.sendTo(str, strlength, IPCIM, echoServPort); //SEND *010002$
+						sock.sendTo(str, 24, IPCIM, echoServPort); //SEND *010002$
 						Sleep(2);
 						//printf("fuel: %s\n",str);	
 						//--------------------------------------------------------------------
 						//PUBLIC INFO on the cars => *020010$ 
 						strcpy(str,"*020010$");
 						//POS XYZ
-						sprintf(str2, "%.2f",globCar->_pos_X);							
+						sfloat2fixstring(str2,globCar->_pos_X);							
 						strcat(str,str2);	
-						sprintf(str2, "%.2f",globCar->_pos_Y);
+						sfloat2fixstring(str2,globCar->_pos_Y);
 						strcat(str,str2);
-						sprintf(str2, "%.2f",globCar->_pos_Z);
+						sfloat2fixstring(str2,globCar->_pos_Z);
 						strcat(str,str2);
 						//SPEED XYZ
-						sprintf(str2, "%.2f",globCar->_speed_x);
+						sfloat2fixstring(str2,globCar->_speed_x);
 						strcat(str,str2);
-						sprintf(str2, "%.2f",globCar->_speed_y);
+						sfloat2fixstring(str2,globCar->_speed_y);
 						strcat(str,str2);
-						sprintf(str2, "%.2f",globCar->_speed_z);
+						sfloat2fixstring(str2,globCar->_speed_z);
 						strcat(str,str2);
 						//ACCEL XYZ
-						sprintf(str2, "%.2f",globCar->_accel_x);
+						sfloat2fixstring(str2,globCar->_accel_x);
 						strcat(str,str2);
-						sprintf(str2, "%.2f",globCar->_accel_y);
+						sfloat2fixstring(str2,globCar->_accel_y);
 						strcat(str,str2);
-						sprintf(str2, "%.2f",globCar->_accel_z);
+						sfloat2fixstring(str2,globCar->_accel_z);
 						strcat(str,str2);	
-						sock.sendTo(str, strlength, IPCIM, echoServPort); //SEND *020010$
+						sock.sendTo(str, 80, IPCIM, echoServPort); //SEND *020010$
 						Sleep(2);
 						//printf("kuld_car_info_X: %s\n",str);
 
@@ -619,4 +622,23 @@ void ErrorHandler(LPTSTR lpszFunction)
 
     LocalFree(lpMsgBuf);
     LocalFree(lpDisplayBuf);
+}
+//Creates a srting with a format:
+//SXXX.XXX, where S is the sign
+void sfloat2fixstring(char* str, float f)
+{
+	int k = 0;
+	sprintf(str,"%+3.3f",f);
+	if(f < 0 ) f = -f;
+	if( (f < 100) && (f >= 10)) k = 1;
+	if(f <= 10) k = 2;
+	if(k)
+	{
+		for(int i = TMP_STR - 1;i > 1; i--)
+		{
+			str[i] = str[i-k];
+		}
+		str[1] = '0';
+		if(k == 2)str[2] = '0';
+	}
 }
