@@ -34,6 +34,9 @@
 	#include <time.h>
 	#include "driver.h"
 
+	#include <string.h>
+
+
 //===================================================================
 
 	#include <iostream>
@@ -48,7 +51,7 @@
 
 	const int REC_PORT = 9999;	   //given local PORT to construct UDP socket 
 	unsigned short echoServPort;
-	#define MAX_STR 20
+	#define MAX_STR 80
 
 
 ///////////////////// T H R E A D /////////////////////////////
@@ -337,10 +340,10 @@ DWORD WINAPI adatKuldThread( LPVOID lpParam )
 
     hStdout = GetStdHandle(STD_OUTPUT_HANDLE);
     if( hStdout == INVALID_HANDLE_VALUE )
-        return 1;
-			
-			int strlen = MAX_STR;
-			
+        return 1;		
+
+			int strlength = MAX_STR;
+
 			char* str = new char[MAX_STR];
 			char* str2 = new char[10];
 
@@ -370,235 +373,128 @@ DWORD WINAPI adatKuldThread( LPVOID lpParam )
 						XX is the ID of the property.
 						*/
 
-										
 						if(globCar->_enginerpm !=0)
 						{
-						strcpy(str,"*010001$");
-						sprintf(str2, "%.2f",globCar->_enginerpm);
-						strcat(str,str2);	
-						sock.sendTo(str, strlen, IPCIM, echoServPort); //SEND *010001$
-						Sleep(2);
-						//printf("engine rpm: %s\n",str);
-					 //printf("Elkuldtem es varok 100ms-t\n");
+							strcpy(str,"*010001$");
+							sprintf(str2, "%.2f",globCar->_enginerpm);
+							strcat(str,str2);	
+							sock.sendTo(str, strlength, IPCIM, echoServPort); //SEND *010001$
+							Sleep(2);
+							//printf("engine rpm: %s\n",str);
+						 //printf("Elkuldtem es varok 100ms-t\n");
+						}		
+
+						
+						//*140001$ => Slip value							
+						//ABS functionality
+						if(globCar->_speed_x != 0)
+						{								
+							float slip = 0.0;
+							int i;					
+							
+							strcpy(str,"*140001$");
+							
+							if((globCar->_speed_x < 5) && globCar->_wheelSpinVel(1) < 5 )	slip = 0;
+							else	slip = 1-(globCar->_wheelSpinVel(1)/(globCar->_speed_x/globCar->_wheelRadius(1)));
+
+							if(slip < 0)	slip = 0;
+							if(slip > 1)	slip = 1;
+					
+							sprintf(str2, "%.5f",(slip) );
+							strcat(str,str2);
+							sock.sendTo(str, strlength, IPCIM, echoServPort); //SEND *140001$
+							Sleep(2);
+							//printf("slip: %s\n",str);						
 						}
-						
-						//*140001$ => Slip value
-							
-							//ABS functionality
-							if(globCar->_speed_x != 0)
-							{
-								
-								float slip = 0.0;
-								int i;
-								
-								
-								//	slip = globCar->_wheelSpinVel(1); 
-								
-								//slip = slip/4.0;
-								
-								strcpy(str,"*140001$");
 
-								
-								if((globCar->_speed_x < 5) && globCar->_wheelSpinVel(1) < 5 ){
-								slip = 0;
-								}
-
-								else{
-								slip = 1-(globCar->_wheelSpinVel(1)/(globCar->_speed_x/globCar->_wheelRadius(1)));
-								}
-
-								if(slip < 0){
-								slip = 0;
-								}
-								if(slip > 1){
-								slip = 1;
-								}
-
-							
-								sprintf(str2, "%.5f",(slip) );
-								strcat(str,str2);
-								sock.sendTo(str, strlen, IPCIM, echoServPort); //SEND *140001$
-								Sleep(2);
-								//printf("slip: %s\n",str);
-								
-								
-							
-							}
-
-									/** 
-							Dynamic wheel information :
-							*1000XX$ => Wheel 0
-							*1100XX$ => Wheel 1
-							*1200XX$ => Wheel 2
-							*1300XX$ => Wheel 3
-							XX is the ID of the property.
-							*/
-							//SPIN VELOCITY
-						
-							if(globCar->_wheelSpinVel(0) !=0)
-							{
-							strcpy(str,"*100001$");
-							sprintf(str2, "%.2f",globCar->_wheelSpinVel(0));
-							strcat(str,str2);	
-							sock.sendTo(str, strlen, IPCIM, echoServPort); //SEND *100001$
-							Sleep(2);
-					//		printf("kuld_Wheel_1_spinvel: %s\n",str);
-							
-							}
-							
-							if(globCar->_wheelSpinVel(1) !=0)
-							{
-							strcpy(str,"*110001$");
-							sprintf(str2, "%.2f",globCar->_wheelSpinVel(1));
-							strcat(str,str2);	
-							sock.sendTo(str, strlen, IPCIM, echoServPort); //SEND *110001$
-							Sleep(2);
-						//	printf("kuld_Wheel_2_spinvel: %s\n",str);
-							
-							}
-
-							if(globCar->_wheelSpinVel(2) !=0)
-							{
-							strcpy(str,"*120001$");
-							sprintf(str2, "%.2f",globCar->_wheelSpinVel(2));
-							strcat(str,str2);	
-							sock.sendTo(str, strlen, IPCIM, echoServPort); //SEND *120001$
-							Sleep(2);
-						//	printf("kuld_Wheel_3_spinvel: %s\n",str);
-							
-							}
-
-							if(globCar->_wheelSpinVel(3) !=0)
-							{
-							strcpy(str,"*130001$");
-							sprintf(str2, "%.2f",globCar->_wheelSpinVel(3));
-							strcat(str,str2);	
-							sock.sendTo(str, strlen, IPCIM, echoServPort); //SEND *130001$
-							Sleep(2);
-						//	printf("kuld_Wheel_4_spinvel: %s\n",str);
-							
-							}
-														if(globCar->_wheelSlipAccel(0) !=0)
-							{
-							strcpy(str,"*100003$");
-							sprintf(str2, "%.2f",globCar->_wheelSlipAccel(0));
-							strcat(str,str2);	
-							sock.sendTo(str, strlen, IPCIM, echoServPort); //SEND *100003$
-							Sleep(2);
-							//printf("kuld_Wheel_1_SlipAccel: %s\n",str);
-							
-							}
-
-							if(globCar->_wheelSlipAccel(1) !=0)
-							{
-							strcpy(str,"*110003$");
-							sprintf(str2, "%.2f",globCar->_wheelSlipAccel(1));
-							strcat(str,str2);	
-							sock.sendTo(str, strlen, IPCIM, echoServPort); //SEND *110003$
-							Sleep(2);
-							//printf("kuld_Wheel_2_SlipAccel: %s\n",str);
-							
-							}
-
-							if(globCar->_wheelSlipAccel(2) !=0)
-							{
-							strcpy(str,"*120003$");
-							sprintf(str2, "%.2f",globCar->_wheelSlipAccel(2));
-							strcat(str,str2);	
-							sock.sendTo(str, strlen, IPCIM, echoServPort); //SEND *120003$
-							Sleep(2);
-							//printf("kuld_Wheel_3_SlipAccel: %s\n",str);
-							
-							}
-
-							if(globCar->_wheelSlipAccel(3) !=0)
-							{
-							strcpy(str,"*130003$");
-							sprintf(str2, "%.2f",globCar->_wheelSlipAccel(3));
-							strcat(str,str2);	
-							sock.sendTo(str, strlen, IPCIM, echoServPort); //SEND *130003$
-							Sleep(2);
-							//printf("kuld_Wheel_4_SlipAccel: %s\n",str);
-							
-							}
-							
-						
-				}
+						//SPIN VELOCITY						
+						strcpy(str,"*150001$");
+						sprintf(str2, "%.2f",globCar->_wheelSpinVel(0));
+						strcat(str,str2);	
+						sprintf(str2, "%.2f",globCar->_wheelSpinVel(1));
+						strcat(str,str2);
+						sprintf(str2, "%.2f",globCar->_wheelSpinVel(2));
+						strcat(str,str2);
+						sprintf(str2, "%.2f",globCar->_wheelSpinVel(3));
+						strcat(str,str2);
+						sock.sendTo(str, strlength, IPCIM, echoServPort); //SEND *150001$
+						Sleep(2);
+				//		printf("kuld_Wheel_spinvel: %s\n",str);
 						
 
+						//SLIP ACCEL
+						strcpy(str,"*100003$");
+						sprintf(str2, "%.2f",globCar->_wheelSlipAccel(0));
+						strcat(str,str2);
+						sprintf(str2, "%.2f",globCar->_wheelSlipAccel(1));
+						strcat(str,str2);
+						sprintf(str2, "%.2f",globCar->_wheelSlipAccel(2));
+						strcat(str,str2);
+						sprintf(str2, "%.2f",globCar->_wheelSlipAccel(3));
+						strcat(str,str2);
+						sock.sendTo(str, strlength, IPCIM, echoServPort); //SEND *100003$
+						Sleep(2);
+						//printf("kuld_Wheel_1_SlipAccel: %s\n",str);						
+								
 
 					if (globKuldes == true )
 					{
-							/** Data known only by the driver */
-							if(globCar->_fuelInstant !=0)
-							{	
-							strcpy(str,"*010002$");
-							sprintf(str2, "%.2f",globCar->_fuelInstant);
-							strcat(str,str2);	
-							sock.sendTo(str, strlen, IPCIM, echoServPort); //SEND *010002$
-							Sleep(2);
-						//	printf("fuel instant: %s\n",str);
-							
-							}
-
-							
-							if(globCar->_fuel !=0)
-							{
-							strcpy(str,"*010003$");
-							sprintf(str2, "%.2f",globCar->_fuel);
-							strcat(str,str2);	
-							sock.sendTo(str, strlen, IPCIM, echoServPort); //SEND *010003$
-							Sleep(2);
-						//	printf("fuel remain: %s\n",str);
-							
-							}
-												
-						
+						/** Data known only by the driver */
+						strcpy(str,"*010004$");
+						sprintf(str2, "%.2f",globCar->_fuelInstant);
+						strcat(str,str2);
+						sprintf(str2, "%.2f",globCar->_fuel);
+						strcat(str,str2);
+						sock.sendTo(str, strlength, IPCIM, echoServPort); //SEND *010002$
+						Sleep(2);
+					//	printf("fuel: %s\n",str);
+							/*
+							}	*/							
 							
 								//SLIP SIDE
 
-							if(globCar->_wheelSlipSide(0) !=0)
-							{
+						if(globCar->_wheelSlipSide(0) !=0)
+						{
 							strcpy(str,"*100002$");
 							sprintf(str2, "%.2f",globCar->_wheelSlipSide(0));
 							strcat(str,str2);	
-							sock.sendTo(str, strlen, IPCIM, echoServPort); //SEND *100002$
+							sock.sendTo(str, strlength, IPCIM, echoServPort); //SEND *100002$
 							Sleep(2);
 						//	printf("kuld__wheel_1_SlipSide: %s\n",str);
 							
-							}
+						}
 
-							if(globCar->_wheelSlipSide(1) !=0)
-							{
+						if(globCar->_wheelSlipSide(1) !=0)
+						{
 							strcpy(str,"*110002$");
 							sprintf(str2, "%.2f",globCar->_wheelSlipSide(1));
 							strcat(str,str2);	
-							sock.sendTo(str, strlen, IPCIM, echoServPort); //SEND *110002$
+							sock.sendTo(str, strlength, IPCIM, echoServPort); //SEND *110002$
 							Sleep(2);
 					//		printf("kuld_wheel_2_SlipSide: %s\n",str);
 							
-							}
+						}
 
-							if(globCar->_wheelSlipSide(2) !=0)
-							{
+						if(globCar->_wheelSlipSide(2) !=0)
+						{
 							strcpy(str,"*120002$");
 							sprintf(str2, "%.2f",globCar->_wheelSlipSide(2));
 							strcat(str,str2);	
-							sock.sendTo(str, strlen, IPCIM, echoServPort); //SEND *120002$
+							sock.sendTo(str, strlength, IPCIM, echoServPort); //SEND *120002$
 							Sleep(2);
 						//	printf("kuld_wheel_3_SlipSide: %s\n",str);
 							
-							}
+						}
 
-							if(globCar->_wheelSlipSide(3) !=0)
-							{
+						if(globCar->_wheelSlipSide(3) !=0)
+						{
 							strcpy(str,"*130002$");
 							sprintf(str2, "%.2f",globCar->_wheelSlipSide(3));
 							strcat(str,str2);	
-							sock.sendTo(str, strlen, IPCIM, echoServPort); //SEND *130002$
+							sock.sendTo(str, strlength, IPCIM, echoServPort); //SEND *130002$
 							Sleep(2);
 						//	printf("kuld_wheel_4_SlipSide: %s\n",str);
-							
+						}
 							
 
 						
@@ -606,212 +502,61 @@ DWORD WINAPI adatKuldThread( LPVOID lpParam )
 						
 							//SLIP SIDE Accel.
 							
-							if(globCar->_wheelSlipAccel(0) !=0)
-							{
+						if(globCar->_wheelSlipAccel(0) !=0)
+						{
 							strcpy(str,"*100003$");
 							sprintf(str2, "%.2f",globCar->_wheelSlipAccel(0));
 							strcat(str,str2);	
-							sock.sendTo(str, strlen, IPCIM, echoServPort); //SEND *100003$
+							sock.sendTo(str, strlength, IPCIM, echoServPort); //SEND *100003$
 							Sleep(2);
 							//printf("kuld_Wheel_1_SlipAccel: %s\n",str);
 							
-							}
+						}
 
-							if(globCar->_wheelSlipAccel(1) !=0)
-							{
+						if(globCar->_wheelSlipAccel(1) !=0)
+						{
 							strcpy(str,"*110003$");
 							sprintf(str2, "%.2f",globCar->_wheelSlipAccel(1));
 							strcat(str,str2);	
-							sock.sendTo(str, strlen, IPCIM, echoServPort); //SEND *110003$
+							sock.sendTo(str, strlength, IPCIM, echoServPort); //SEND *110003$
 							Sleep(2);
 							//printf("kuld_Wheel_2_SlipAccel: %s\n",str);
 							
-							}
+						}
 
-							if(globCar->_wheelSlipAccel(2) !=0)
-							{
+						if(globCar->_wheelSlipAccel(2) !=0)
+						{
 							strcpy(str,"*120003$");
 							sprintf(str2, "%.2f",globCar->_wheelSlipAccel(2));
 							strcat(str,str2);	
-							sock.sendTo(str, strlen, IPCIM, echoServPort); //SEND *120003$
+							sock.sendTo(str, strlength, IPCIM, echoServPort); //SEND *120003$
 							Sleep(2);
 							//printf("kuld_Wheel_3_SlipAccel: %s\n",str);
 							
-							}
+						}
 
-							if(globCar->_wheelSlipAccel(3) !=0)
-							{
+						if(globCar->_wheelSlipAccel(3) !=0)
+						{
 							strcpy(str,"*130003$");
 							sprintf(str2, "%.2f",globCar->_wheelSlipAccel(3));
 							strcat(str,str2);	
-							sock.sendTo(str, strlen, IPCIM, echoServPort); //SEND *130003$
+							sock.sendTo(str, strlength, IPCIM, echoServPort); //SEND *130003$
 							Sleep(2);
 							//printf("kuld_Wheel_4_SlipAccel: %s\n",str);
 							
-							}
+						}
 
-							if(globCar->_speed_x !=0)
-							{
+						if(globCar->_speed_x !=0)
+						{
 							strcpy(str,"*020004$");
 							sprintf(str2, "%.2f",globCar->_speed_x);
 							strcat(str,str2);	
-							sock.sendTo(str, strlen, IPCIM, echoServPort); //SEND *020004$
+							sock.sendTo(str, strlength, IPCIM, echoServPort); //SEND *020004$
 							Sleep(2);
 				//			printf("kuld_car_speed_X: %s\n",str);
 							
-							}
+						}
 
-							/*				
-							//FX
-							strcpy(str,"*100004$");
-							sprintf(str2, "%.2f",globCar->_wheelFx(0));
-							strcat(str,str2);	
-							sock.sendTo(str, strlen, IPCIM, echoServPort); //SEND *100004$
-							printf("kuld_Wheel_1_wheelFx: %s\n",str);
-							Sleep(50);
-
-							strcpy(str,"*110004$");
-							sprintf(str2, "%.2f",globCar->_wheelFx(1));
-							strcat(str,str2);	
-							sock.sendTo(str, strlen, IPCIM, echoServPort); //SEND *110004$
-							printf("kuld_Wheel_2_wheelFx: %s\n",str);
-							Sleep(50);
-
-							strcpy(str,"*120004$");
-							sprintf(str2, "%.2f",globCar->_wheelFx(2));
-							strcat(str,str2);	
-							sock.sendTo(str, strlen, IPCIM, echoServPort); //SEND *120004$
-							printf("kuld_Wheel_3_wheelFx: %s\n",str);
-							Sleep(50);
-
-							strcpy(str,"*130004$");
-							sprintf(str2, "%.2f",globCar->_wheelFx(3));
-							strcat(str,str2);	
-							sock.sendTo(str, strlen, IPCIM, echoServPort); //SEND *130004$
-							printf("kuld_Wheel_4_wheelFx: %s\n",str);
-							Sleep(50);
-
-							
-							//FY
-							strcpy(str,"*100005$");
-							sprintf(str2, "%.2f",globCar->_wheelFy(0));
-							strcat(str,str2);	
-							sock.sendTo(str, strlen, IPCIM, echoServPort); //SEND *100005$
-							printf("kuld_Wheel_1_wheelFy: %s\n",str);
-							Sleep(50);
-
-							strcpy(str,"*110005$");
-							sprintf(str2, "%.2f",globCar->_wheelFy(1));
-							strcat(str,str2);	
-							sock.sendTo(str, strlen, IPCIM, echoServPort); //SEND *110005$
-							printf("kuld_Wheel_2_wheelFy: %s\n",str);
-							Sleep(50);
-
-							strcpy(str,"*120005$");
-							sprintf(str2, "%.2f",globCar->_wheelFy(2));
-							strcat(str,str2);	
-							sock.sendTo(str, strlen, IPCIM, echoServPort); //SEND *120005$
-							printf("kuld_Wheel_3_wheelFy: %s\n",str);
-							Sleep(50);
-
-							strcpy(str,"*130005$");
-							sprintf(str2, "%.2f",globCar->_wheelFy(3));
-							strcat(str,str2);	
-							sock.sendTo(str, strlen, IPCIM, echoServPort); //SEND *130005$
-							printf("kuld_Wheel_4_wheelFy: %s\n",str);
-							Sleep(50);
-
-
-							//FZ
-							strcpy(str,"*100006$");
-							sprintf(str2, "%.2f",globCar->_wheelFz(0));
-							strcat(str,str2);	
-							sock.sendTo(str, strlen, IPCIM, echoServPort); //SEND *100006$
-							printf("kuld_Wheel_1_wheelFz: %s\n",str);
-							Sleep(50);
-
-							strcpy(str,"*110006$");
-							sprintf(str2, "%.2f",globCar->_wheelFz(1));
-							strcat(str,str2);	
-							sock.sendTo(str, strlen, IPCIM, echoServPort); //SEND *110006$
-							printf("kuld_Wheel_2_wheelFz: %s\n",str);
-							Sleep(50);
-
-							strcpy(str,"*120006$");
-							sprintf(str2, "%.2f",globCar->_wheelFz(2));
-							strcat(str,str2);	
-							sock.sendTo(str, strlen, IPCIM, echoServPort); //SEND *120006$
-							printf("kuld_Wheel_3_wheelFz: %s\n",str);
-							Sleep(50);
-
-							strcpy(str,"*130006$");
-							sprintf(str2, "%.2f",globCar->_wheelFz(3));
-							strcat(str,str2);	
-							sock.sendTo(str, strlen, IPCIM, echoServPort); //SEND *130006$
-							printf("kuld_Wheel_4_wheelFz: %s\n",str);
-							Sleep(50);
-
-
-							//brake temp
-							strcpy(str,"*100007$");
-							sprintf(str2, "%.2f",globCar->_brakeTemp(0));
-							strcat(str,str2);	
-							sock.sendTo(str, strlen, IPCIM, echoServPort); //SEND *100007$
-							printf("kuld_Wheel_1_brakeTemp: %s\n",str);
-							Sleep(50);
-
-							strcpy(str,"*110007$");
-							sprintf(str2, "%.2f",globCar->_brakeTemp(1));
-							strcat(str,str2);	
-							sock.sendTo(str, strlen, IPCIM, echoServPort); //SEND *110007$
-							printf("kuld_Wheel_2_brakeTemp: %s\n",str);
-							Sleep(50);
-
-							strcpy(str,"*120007$");
-							sprintf(str2, "%.2f",globCar->_brakeTemp(2));
-							strcat(str,str2);	
-							sock.sendTo(str, strlen, IPCIM, echoServPort); //SEND *120007$
-							printf("kuld_Wheel_3_brakeTemp: %s\n",str);
-							Sleep(50);
-
-							strcpy(str,"*130007$");
-							sprintf(str2, "%.2f",globCar->_brakeTemp(3));
-							strcat(str,str2);	
-							sock.sendTo(str, strlen, IPCIM, echoServPort); //SEND *130007$
-							printf("kuld_Wheel_4_brakeTemp: %s\n",str);
-							Sleep(50);
-
-						
-							//tyre temp
-							strcpy(str,"*100008$");
-							sprintf(str2, "%.2f",globCar->_tyreT_out(0));
-							strcat(str,str2);	
-							sock.sendTo(str, strlen, IPCIM, echoServPort); //SEND *100008$
-							printf("kuld_Wheel_1_tyreT_out: %s\n",str);
-							Sleep(50);
-
-							strcpy(str,"*110008$");
-							sprintf(str2, "%.2f",globCar->_tyreT_out(1));
-							strcat(str,str2);	
-							sock.sendTo(str, strlen, IPCIM, echoServPort); //SEND *110008$
-							printf("kuld_Wheel_2_tyreT_out: %s\n",str);
-							Sleep(50);
-
-							strcpy(str,"*120008$");
-							sprintf(str2, "%.2f",globCar->_tyreT_out(2));
-							strcat(str,str2);	
-							sock.sendTo(str, strlen, IPCIM, echoServPort); //SEND *120008$
-							printf("kuld_Wheel_3_tyreT_out: %s\n",str);
-							Sleep(50);
-
-							strcpy(str,"*130008$");
-							sprintf(str2, "%.2f",globCar->_tyreT_out(3));
-							strcat(str,str2);	
-							sock.sendTo(str, strlen, IPCIM, echoServPort); //SEND *130008$
-							printf("kuld_Wheel_4_tyreT_out: %s\n",str);
-							Sleep(50);
-							
-							*/
 							/*
 							Public info on the cars => *0200XX$ 
 							XX is the ID of the property.
@@ -819,98 +564,98 @@ DWORD WINAPI adatKuldThread( LPVOID lpParam )
 
 							/* Position XYZ */
 
-							if(globCar->_pos_X !=0)
-							{
+						if(globCar->_pos_X !=0)
+						{
 							strcpy(str,"*020001$");
 							sprintf(str2, "%.2f",globCar->_pos_X);
 							strcat(str,str2);	
-							sock.sendTo(str, strlen, IPCIM, echoServPort); //SEND *020001$
+							sock.sendTo(str, strlength, IPCIM, echoServPort); //SEND *020001$
 							Sleep(2);
 					//		printf("kuld_car_pos_X: %s\n",str);
 							
-							}
+						}
 
-							if(globCar->_pos_Y !=0)
-							{
+						if(globCar->_pos_Y !=0)
+						{
 							strcpy(str,"*020002$");
 							sprintf(str2, "%.2f",globCar->_pos_Y);
 							strcat(str,str2);	
-							sock.sendTo(str, strlen, IPCIM, echoServPort); //SEND *020002$
+							sock.sendTo(str, strlength, IPCIM, echoServPort); //SEND *020002$
 							Sleep(2);
 					//		printf("kuld_car_pos_Y: %s\n",str);
 							
-							}
+						}
 
-							if(globCar->_pos_Z !=0)
-							{
+						if(globCar->_pos_Z !=0)
+						{
 							strcpy(str,"*020003$");
 							sprintf(str2, "%.2f",globCar->_pos_Z);
 							strcat(str,str2);	
-							sock.sendTo(str, strlen, IPCIM, echoServPort); //SEND *020003$
+							sock.sendTo(str, strlength, IPCIM, echoServPort); //SEND *020003$
 							Sleep(2);
 					//		printf("kuld_car_pos_Z: %s\n",str);
 							
-							}
+						}
 
 
 							/* Speed XYZ */
 
 			
-							if(globCar->_speed_y !=0)
-							{
+						if(globCar->_speed_y !=0)
+						{
 							strcpy(str,"*020005$");
 							sprintf(str2, "%.2f",globCar->_speed_y);
 							strcat(str,str2);	
-							sock.sendTo(str, strlen, IPCIM, echoServPort); //SEND *020005$
+							sock.sendTo(str, strlength, IPCIM, echoServPort); //SEND *020005$
 							Sleep(2);
 				//			printf("kuld_car_speed_Y: %s\n",str);
 							
-							}
+						}
 
-							if(globCar->_speed_z !=0)
-							{
+						if(globCar->_speed_z !=0)
+						{
 							strcpy(str,"*020006$");
 							sprintf(str2, "%.2f",globCar->_speed_z);
 							strcat(str,str2);	
-							sock.sendTo(str, strlen, IPCIM, echoServPort); //SEND *020006$
+							sock.sendTo(str, strlength, IPCIM, echoServPort); //SEND *020006$
 							Sleep(2);
 				//			printf("kuld_car_speed_Z: %s\n",str);
 							
-							}
+						}
 
 							/* Acc XYZ */
-							if(globCar->_accel_x !=0)
-							{
+						if(globCar->_accel_x !=0)
+						{
 							strcpy(str,"*020007$");
 							sprintf(str2, "%.2f",globCar->_accel_x);
 							strcat(str,str2);	
-							sock.sendTo(str, strlen, IPCIM, echoServPort); //SEND *020007$
+							sock.sendTo(str, strlength, IPCIM, echoServPort); //SEND *020007$
 							Sleep(2);
 				//			printf("kuld_car_acc_X: %s\n",str);
 							
-							}
+						}
 
-							if(globCar->_accel_y !=0)
-							{
+						if(globCar->_accel_y !=0)
+						{
 							strcpy(str,"*020008$");
 							sprintf(str2, "%.2f",globCar->_accel_y);
 							strcat(str,str2);	
-							sock.sendTo(str, strlen, IPCIM, echoServPort); //SEND *020008$
+							sock.sendTo(str, strlength, IPCIM, echoServPort); //SEND *020008$
 							Sleep(2);
 			//				printf("kuld_car_acc_Y: %s\n",str);
 							
-							}
+						}
 
-							if(globCar->_accel_z !=0)
-							{
+						if(globCar->_accel_z !=0)
+						{
 							strcpy(str,"*020009$");
 							sprintf(str2, "%.2f",globCar->_accel_z);
 							strcat(str,str2);	
-							sock.sendTo(str, strlen, IPCIM, echoServPort); //SEND *020009$
+							sock.sendTo(str, strlength, IPCIM, echoServPort); //SEND *020009$
 							Sleep(2);
 			//				printf("kuld_car_acc_Z: %s\n",str);
 							
-							}
+						}
 
 					}
 					
